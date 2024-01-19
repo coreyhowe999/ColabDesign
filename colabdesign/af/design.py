@@ -393,15 +393,10 @@ class _af_design:
   def _mutate(self, seq, plddt=None, logits=None, mutation_rate=1,aa_not_tried=None,aa_idx_to_mutate=None):
     '''mutate random position'''
     seq = np.array(seq)
-    print(aa_not_tried)
-    rand_int = random.randint(0, len(aa_not_tried))
-    print(rand_int)
+    rand_int = random.randint(0, len(aa_not_tried)-1)
     a = aa_not_tried[rand_int]
     aa_not_tried.remove(a)
-    print(a)
-    print(aa_not_tried)
     # return mutant
-    print(seq[:,aa_idx_to_mutate])
     seq[:,aa_idx_to_mutate] = [a]
     
     return seq, aa_not_tried
