@@ -390,39 +390,17 @@ class _af_design:
       kwargs["num_models"] = len(self._model_names)
       self.design_hard(hard_iters, temp=1e-2, **kwargs)
 
-  def _mutate(self, seq, plddt=None, logits=None, mutation_rate=1):
+  def _mutate(self, seq, plddt=None, logits=None, mutation_rate=1,aa_not_tried,i):
     '''mutate random position'''
     seq = np.array(seq)
     N,L = seq.shape
-
-    # fix some positions
-    i_prob = np.ones(L) if plddt is None else np.maximum(1-plddt,0)
-    i_prob[np.isnan(i_prob)] = 0
-    if "fix_pos" in self.opt:
-      if "pos" in self.opt:
-        p = self.opt["pos"][self.opt["fix_pos"]]
-        seq[...,p] = self._wt_aatype_sub
-      else:
-        p = self.opt["fix_pos"]
-        seq[...,p] = self._wt_aatype[...,p]
-      i_prob[p] = 0
     
-    for m in range(mutation_rate):
-      # sample position
-      # https://www.biorxiv.org/content/10.1101/2021.08.24.457549v1
-      i = np.random.choice(np.arange(L),p=i_prob/i_prob.sum())
-
-      # sample amino acid
-      logits = np.array(0 if logits is None else logits)
-      if logits.ndim == 3: logits = logits[:,i]
-      elif logits.ndim == 2: logits = logits[i]
-      a_logits = logits - np.eye(self._args["alphabet_size"])[seq[:,i]] * 1e8
-      a = categorical(softmax(a_logits))
-
-      # return mutant
-      seq[:,i] = a
+	  a = aa_not_tried[random.randint(0, len(aa_not_tried))]
+	  aa_not_tried.remove(a)
+    # return mutant
+    seq[:,i] = a
     
-    return seq
+    return seq, aa_not_tried
 
   def design_semigreedy(self, iters=100, tries=10, dropout=False,
                         save_best=True, seq_logits=None, e_tries=None, **kwargs):
@@ -503,31 +481,37 @@ class _af_design:
     
     prev_loss = 100
     current_loss = 100
+	  aa_not_tried = list("ADEFGHIKLMNPQRSTVWY")
     for i in range(iters):
       buff = []
       model_nums = self._get_model_nums(**model_flags)
       num_tries = 0
+	    aa_try_idx_list = np.argsort(plddt)
+	    aa_try_idx = 0
       while current_loss >= prev_loss:
         num_tries+=1
-        mut_seq = self._mutate(seq=seq, plddt=plddt,
-                               logits=seq_logits + self._inputs["bias"])
-        aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
-        current_loss = aux["loss"]
+    		if len(aa_not_tried) <1:
+    			aa_try_idx+=1
+            mut_seq,aa_not_tried = self._mutate(seq=seq, plddt=plddt,
+                                   logits=seq_logits + self._inputs["bias"],
+    							   aa_not_tried,aa_try_idx_list[aa_try_idx])
+            aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
+            current_loss = aux["loss"]
 
-      print('num tries to improvement:',num_tries)
-      buff.append({"aux":aux, "seq":np.array(mut_seq)})
-      losses = [x["aux"]["loss"] for x in buff]
-      prev_loss = current_loss
-      # accept best
-      best = buff[np.argmin(losses)]
-      self.aux, seq = best["aux"], jnp.array(best["seq"])
-      self.set_seq(seq=seq, bias=self._inputs["bias"])
-      self._save_results(save_best=save_best, verbose=verbose)
-
-      # update plddt
-      plddt = best["aux"]["plddt"]
-      plddt = plddt[self._target_len:] if self.protocol == "binder" else plddt[:self._len]
-      self._k += 1
+        print('num tries to improvement:',num_tries)
+        buff.append({"aux":aux, "seq":np.array(mut_seq)})
+        losses = [x["aux"]["loss"] for x in buff]
+        prev_loss = current_loss
+        # accept best
+        best = buff[np.argmin(losses)]
+        self.aux, seq = best["aux"], jnp.array(best["seq"])
+        self.set_seq(seq=seq, bias=self._inputs["bias"])
+        self._save_results(save_best=save_best, verbose=verbose)
+  
+        # update plddt
+        plddt = best["aux"]["plddt"]
+        plddt = plddt[self._target_len:] if self.protocol == "binder" else plddt[:self._len]
+        self._k += 1
 
   def design_pssm_semigreedy(self, soft_iters=300, hard_iters=32, tries=10, e_tries=None, ramp_recycles=True, ramp_models=True, **kwargs):
     verbose = kwargs.get("verbose",1)
