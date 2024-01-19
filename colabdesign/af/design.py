@@ -529,8 +529,7 @@ class _af_design:
       plddt = plddt[self._target_len:] if self.protocol == "binder" else plddt[:self._len]
       self._k += 1
 
-  def design_pssm_semigreedy(self, soft_iters=300, hard_iters=32, tries=10, e_tries=None,
-                             ramp_recycles=True, ramp_models=True, **kwargs):
+  def design_pssm_semigreedy(self, soft_iters=300, hard_iters=32, tries=10, e_tries=None, ramp_recycles=True, ramp_models=True, **kwargs):
 
     verbose = kwargs.get("verbose",1)
 
