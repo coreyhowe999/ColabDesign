@@ -487,7 +487,7 @@ class _af_design:
       num_tries = 0
       plddt_idx_sorted = np.argsort(plddt)
       aa_try_idx = 0
-      while current_loss >= prev_loss:
+      while current_loss >= prev_loss and aa_try_idx < len(plddt_idx_sorted):
         num_tries+=1
         if len(aa_not_tried) <1:
           aa_try_idx+=1
@@ -495,11 +495,11 @@ class _af_design:
         aa_idx_to_mutate = plddt_idx_sorted[aa_try_idx]
         mut_seq,aa_not_tried = self._mutate(seq=seq, plddt=plddt, logits=seq_logits + self._inputs["bias"], aa_not_tried=aa_not_tried,aa_idx_to_mutate=aa_idx_to_mutate)
         aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
+        buff.append({"aux":aux, "seq":np.array(mut_seq)})
         current_loss = aux["loss"]
         
       print('num tries to improvement:',num_tries)
       print('num residdes tried:',aa_try_idx+1)
-      buff.append({"aux":aux, "seq":np.array(mut_seq)})
       losses = [x["aux"]["loss"] for x in buff]
       prev_loss = current_loss
       # accept best
