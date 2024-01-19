@@ -474,7 +474,7 @@ class _af_design:
       self._k += 1
 
 ###########################################
-def my_design_semigreedy(self, iters=100, tries=10, dropout=False,
+  def my_design_semigreedy(self, iters=100, tries=10, dropout=False,
                         save_best=True, seq_logits=None, e_tries=None, **kwargs):
 
     '''semigreedy search'''    
