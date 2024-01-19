@@ -489,15 +489,15 @@ class _af_design:
       aa_try_idx = 0
       while current_loss >= prev_loss:
         num_tries+=1
-	      if len(aa_not_tried) <1:
-	        aa_try_idx+=1
-	      mut_idx = aa_try_idx_list[aa_try_idx]
+        if len(aa_not_tried) <1:
+          aa_try_idx+=1
+          mut_idx = aa_try_idx_list[aa_try_idx]
         mut_seq,aa_not_tried = self._mutate(seq=seq, plddt=plddt, logits=seq_logits + self._inputs["bias"], aa_not_tried=aa_not_tried,mut_idx=mut_idx)
         aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
         current_loss = aux["loss"]
         
       print('num tries to improvement:',num_tries)
-	    print('num residdes tried:',aa_try_idx+1)
+      print('num residdes tried:',aa_try_idx+1)
 	      
       buff.append({"aux":aux, "seq":np.array(mut_seq)})
       losses = [x["aux"]["loss"] for x in buff]
