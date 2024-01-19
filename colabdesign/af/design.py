@@ -390,7 +390,7 @@ class _af_design:
       kwargs["num_models"] = len(self._model_names)
       self.design_hard(hard_iters, temp=1e-2, **kwargs)
 
-  def _mutate(self, seq, plddt=None, logits=None, mutation_rate=1,aa_not_tried,i):
+  def _mutate(self, seq, plddt=None, logits=None, mutation_rate=1,aa_not_tried=aa_not_tried=None,mut_idx=None):
     '''mutate random position'''
     seq = np.array(seq)
     N,L = seq.shape
@@ -398,7 +398,7 @@ class _af_design:
 	  a = aa_not_tried[random.randint(0, len(aa_not_tried))]
 	  aa_not_tried.remove(a)
     # return mutant
-    seq[:,i] = a
+    seq[:,mut_idx] = a
     
     return seq, aa_not_tried
 
@@ -492,11 +492,10 @@ class _af_design:
         num_tries+=1
     		if len(aa_not_tried) <1:
     			aa_try_idx+=1
-            mut_seq,aa_not_tried = self._mutate(seq=seq, plddt=plddt,
-                                   logits=seq_logits + self._inputs["bias"],
-    							   aa_not_tried,aa_try_idx_list[aa_try_idx])
-            aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
-            current_loss = aux["loss"]
+        mut_idx = aa_try_idx_list[aa_try_idx]
+        mut_seq,aa_not_tried = self._mutate(seq=seq, plddt=plddt, logits=seq_logits + self._inputs["bias"], aa_not_tried=aa_not_tried,mut_idx=mut_idx)
+        aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
+        current_loss = aux["loss"]
 
         print('num tries to improvement:',num_tries)
         buff.append({"aux":aux, "seq":np.array(mut_seq)})
