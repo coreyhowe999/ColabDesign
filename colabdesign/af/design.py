@@ -498,7 +498,6 @@ class _af_design:
         
       print('num tries to improvement:',num_tries)
       print('num residdes tried:',aa_try_idx+1)
-	      
       buff.append({"aux":aux, "seq":np.array(mut_seq)})
       losses = [x["aux"]["loss"] for x in buff]
       prev_loss = current_loss
