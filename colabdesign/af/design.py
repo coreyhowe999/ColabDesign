@@ -398,7 +398,7 @@ class _af_design:
     aa_not_tried.remove(a)
     # return mutant
     print(seq[:,mut_idx])
-    seq[:,mut_idx] = a
+    seq[:,mut_idx] = [a]
     
     return seq, aa_not_tried
 
@@ -481,7 +481,7 @@ class _af_design:
     
     prev_loss = 100
     current_loss = 100
-    aa_not_tried = list("ADEFGHIKLMNPQRSTVWY")
+    aa_not_tried = [i for i in range(0,20,1)]
     for i in range(iters):
       buff = []
       model_nums = self._get_model_nums(**model_flags)
