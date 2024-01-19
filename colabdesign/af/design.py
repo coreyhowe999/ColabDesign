@@ -390,7 +390,7 @@ class _af_design:
       kwargs["num_models"] = len(self._model_names)
       self.design_hard(hard_iters, temp=1e-2, **kwargs)
 
-  def _mutate(self, seq, plddt=None, logits=None, mutation_rate=1,aa_not_tried=aa_not_tried=None,mut_idx=None):
+  def _mutate(self, seq, plddt=None, logits=None, mutation_rate=1,aa_not_tried=None,mut_idx=None):
     '''mutate random position'''
     seq = np.array(seq)
     N,L = seq.shape
