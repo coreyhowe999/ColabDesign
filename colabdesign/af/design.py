@@ -394,9 +394,8 @@ class _af_design:
     '''mutate random position'''
     seq = np.array(seq)
     N,L = seq.shape
-    
-	  a = aa_not_tried[random.randint(0, len(aa_not_tried))]
-	  aa_not_tried.remove(a)
+    a = aa_not_tried[random.randint(0, len(aa_not_tried))]
+    aa_not_tried.remove(a)
     # return mutant
     seq[:,mut_idx] = a
     
@@ -481,23 +480,25 @@ class _af_design:
     
     prev_loss = 100
     current_loss = 100
-	  aa_not_tried = list("ADEFGHIKLMNPQRSTVWY")
+    aa_not_tried = list("ADEFGHIKLMNPQRSTVWY")
     for i in range(iters):
       buff = []
       model_nums = self._get_model_nums(**model_flags)
       num_tries = 0
-	    aa_try_idx_list = np.argsort(plddt)
-	    aa_try_idx = 0
+      aa_try_idx_list = np.argsort(plddt)
+      aa_try_idx = 0
       while current_loss >= prev_loss:
         num_tries+=1
-    		if len(aa_not_tried) <1:
-    			aa_try_idx+=1
+    	if len(aa_not_tried) <1:
+    	  aa_try_idx+=1
         mut_idx = aa_try_idx_list[aa_try_idx]
         mut_seq,aa_not_tried = self._mutate(seq=seq, plddt=plddt, logits=seq_logits + self._inputs["bias"], aa_not_tried=aa_not_tried,mut_idx=mut_idx)
         aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
         current_loss = aux["loss"]
-
+        
         print('num tries to improvement:',num_tries)
+	print('num residdes tried:',aa_try_idx+1)
+	      
         buff.append({"aux":aux, "seq":np.array(mut_seq)})
         losses = [x["aux"]["loss"] for x in buff]
         prev_loss = current_loss
