@@ -397,6 +397,7 @@ class _af_design:
     a = aa_not_tried[random.randint(0, len(aa_not_tried))]
     aa_not_tried.remove(a)
     # return mutant
+    print(seq[:,mut_idx])
     seq[:,mut_idx] = a
     
     return seq, aa_not_tried
