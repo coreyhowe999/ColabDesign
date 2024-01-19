@@ -390,17 +390,19 @@ class _af_design:
       kwargs["num_models"] = len(self._model_names)
       self.design_hard(hard_iters, temp=1e-2, **kwargs)
 
-  def _mutate(self, seq, plddt=None, logits=None, mutation_rate=1,aa_not_tried=None,mut_idx=None):
+  def _mutate(self, seq, plddt=None, logits=None, mutation_rate=1,aa_not_tried=None,aa_idx_to_mutate=None):
     '''mutate random position'''
     seq = np.array(seq)
     print(aa_not_tried)
-    a = aa_not_tried[random.randint(0, len(aa_not_tried))]
+    rand_int = random.randint(0, len(aa_not_tried))
+    print(rand_int)
+    a = aa_not_tried[rand_int]
     aa_not_tried.remove(a)
     print(a)
     print(aa_not_tried)
     # return mutant
-    print(seq[:,mut_idx])
-    seq[:,mut_idx] = [a]
+    print(seq[:,aa_idx_to_mutate])
+    seq[:,aa_idx_to_mutate] = [a]
     
     return seq, aa_not_tried
 
@@ -488,14 +490,14 @@ class _af_design:
       buff = []
       model_nums = self._get_model_nums(**model_flags)
       num_tries = 0
-      aa_try_idx_list = np.argsort(plddt)
+      plddt_idx_sorted = np.argsort(plddt)
       aa_try_idx = 0
       while current_loss >= prev_loss:
         num_tries+=1
         if len(aa_not_tried) <1:
           aa_try_idx+=1
-        mut_idx = aa_try_idx_list[aa_try_idx]
-        mut_seq,aa_not_tried = self._mutate(seq=seq, plddt=plddt, logits=seq_logits + self._inputs["bias"], aa_not_tried=aa_not_tried,mut_idx=mut_idx)
+        aa_idx_to_mutate = plddt_idx_sorted[aa_try_idx]
+        mut_seq,aa_not_tried = self._mutate(seq=seq, plddt=plddt, logits=seq_logits + self._inputs["bias"], aa_not_tried=aa_not_tried,aa_idx_to_mutate=aa_idx_to_mutate)
         aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
         current_loss = aux["loss"]
         
