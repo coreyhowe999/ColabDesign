@@ -523,7 +523,7 @@ class _af_design:
     model_nums = self._get_model_nums(**model_flags)
     verbose = kwargs.pop("verbose",1)
 
-    mut_seq = np.zeros((1,3))
+    mut_seq = np.zeros((3,20))
     # optimize!
     if verbose:
       print("Running binder builder...")
@@ -535,7 +535,7 @@ class _af_design:
     for a in aa_list:
       for b in aa_list:
         for c in aa_list:
-          if (time.time() - start) > (60*60*5.5):
+          if (time.time() - start) > (60*60*5.5) or count :
             print(a,b,c)
             losses = [x["aux"]["loss"] for x in buff]
             # accept best
@@ -543,6 +543,9 @@ class _af_design:
             self.aux, seq = best["aux"], jnp.array(best["seq"])
             self.set_seq(seq=seq, bias=self._inputs["bias"])
             self._save_results(save_best=save_best, verbose=verbose)
+            self.save_pdb('test.pdb')
+            open(f"seq.txt",'w').write(best["seq"])
+            open(f"log.txt",'w').write(best["aux"]["log"])
           count+=1
           print(count,'/',19*19*19)
           mut_seq[:,0] = [a]
