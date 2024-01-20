@@ -534,9 +534,9 @@ class _af_design:
         for c in aa_list:
           count+=1
           print(count,'/ 8000')
-          mut_seq[0,a] = 1
-          mut_seq[1,b] = 1
-          mut_seq[2,c] = 1
+          mut_seq[0,a] = 1.0
+          mut_seq[1,b] = 1.0
+          mut_seq[2,c] = 1.0
           aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
           buff.append({"aux":aux, "seq":np.array(mut_seq)})
     losses = [x["aux"]["loss"] for x in buff]
