@@ -535,7 +535,7 @@ class _af_design:
     for a in aa_list:
       for b in aa_list:
         for c in aa_list:
-          if (time.time() - start) > (60*60*5.5) or count :
+          if (time.time() - start) > (60*60*5.5) or count >10 :
             print(a,b,c)
             losses = [x["aux"]["loss"] for x in buff]
             # accept best
