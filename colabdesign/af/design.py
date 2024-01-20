@@ -4,6 +4,7 @@ import jax.numpy as jnp
 import numpy as np
 from colabdesign.af.alphafold.common import residue_constants
 from colabdesign.shared.utils import copy_dict, update_dict, Key, dict_to_str, to_float, softmax, categorical, to_list, copy_missing
+import time
 
 ####################################################
 # AF_DESIGN - design functions
@@ -526,7 +527,7 @@ class _af_design:
     # optimize!
     if verbose:
       print("Running binder builder...")
-    
+    start = time.time()
     aa_list = [i for i in range(0,20,1)]
     aa_list.remove(4)
     buff = []
@@ -534,16 +535,27 @@ class _af_design:
     for a in aa_list:
       for b in aa_list:
         for c in aa_list:
+          if (time.time() - start) > (60*60*5.5):
+            print(a,b,c)
+            losses = [x["aux"]["loss"] for x in buff]
+            # accept best
+            best = buff[np.argmin(losses)]
+            self.aux, seq = best["aux"], jnp.array(best["seq"])
+            self.set_seq(seq=seq, bias=self._inputs["bias"])
+            self._save_results(save_best=save_best, verbose=verbose)
           count+=1
-          print(count,'/ 8000')
+          print(count,'/',19*19*19)
           mut_seq[:,0] = [a]
           mut_seq[:,1] = [b]
           mut_seq[:,2] = [c]
           aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
           buff.append({"aux":aux, "seq":np.array(mut_seq)})
-    losses = [x["aux"]["loss"] for x in buff]
-    # accept best
-    best = buff[np.argmin(losses)]
+          losses = [x["aux"]["loss"] for x in buff]
+          # accept best
+          best = buff[np.argmin(losses)]
+          buff = []
+          buff.append(best)
+    
     self.aux, seq = best["aux"], jnp.array(best["seq"])
     self.set_seq(seq=seq, bias=self._inputs["bias"])
     self._save_results(save_best=save_best, verbose=verbose)
