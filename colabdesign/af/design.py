@@ -481,6 +481,7 @@ class _af_design:
     prev_loss = 100
     current_loss = 100
     aa_not_tried = [i for i in range(0,20,1)]
+    aa_not_tried.remove(4)
     for i in range(iters):
       buff = []
       model_nums = self._get_model_nums(**model_flags)
@@ -527,6 +528,7 @@ class _af_design:
       print("Running binder builder...")
     
     aa_list = [[i] for i in range(0,20,1)]
+    aa_not_tried.remove(4)
     buff = []
     count=0
     for a in aa_list:
