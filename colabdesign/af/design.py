@@ -397,7 +397,7 @@ class _af_design:
     a = aa_not_tried[rand_int]
     aa_not_tried.remove(a)
     # return mutant
-    seq[:,aa_idx_to_mutate] = [a]
+    seq[aa_idx_to_mutate,a] = 1.0
     
     return seq, aa_not_tried
 
@@ -571,12 +571,12 @@ class _af_design:
 
           kwargs["num_models"] = m + 1
           kwargs["save_best"] = (m + 1) == num_models
-          #self.my_design_semigreedy(iters, tries=tries, e_tries=e_tries, **kwargs)
-          self.design_semigreedy(iters, tries=tries, e_tries=e_tries, **kwargs)
+          self.my_design_semigreedy(iters, tries=tries, e_tries=e_tries, **kwargs)
+          #self.design_semigreedy(iters, tries=tries, e_tries=e_tries, **kwargs)
           if m < 2: iters = iters // 2
       else:
-        #self.my_design_semigreedy(hard_iters, tries=tries, e_tries=e_tries, **kwargs)
-        self.design_semigreedy(iters, tries=tries, e_tries=e_tries, **kwargs)
+        self.my_design_semigreedy(hard_iters, tries=tries, e_tries=e_tries, **kwargs)
+        #self.design_semigreedy(iters, tries=tries, e_tries=e_tries, **kwargs)
 
 ###############################################
 
