@@ -398,7 +398,7 @@ class _af_design:
     a = aa_not_tried[rand_int]
     aa_not_tried.remove(a)
     # return mutant
-    seq[:,aa_idx_to_mutate] = [a]
+    seq[:,aa_idx_to_mutate] = a
     
     return seq, aa_not_tried
 
@@ -555,10 +555,9 @@ class _af_design:
             open(f"log.txt",'w').write(best["aux"]["log"])
           count+=1
           print(count,'/',19*19*19)
-          mut_seq[:,0] = [a]
-          mut_seq[:,1] = [b]
-          mut_seq[:,2] = [c]
-          print(mut_seq)
+          mut_seq[:,0] = a
+          mut_seq[:,1] = b
+          mut_seq[:,2] = c
           aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
           buff.append({"aux":aux, "seq":np.array(mut_seq)})
           losses = [x["aux"]["loss"] for x in buff]
