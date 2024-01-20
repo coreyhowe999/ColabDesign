@@ -523,7 +523,7 @@ class _af_design:
     model_nums = self._get_model_nums(**model_flags)
     verbose = kwargs.pop("verbose",1)
 
-    mut_seq = np.zeros((3, 20))
+    mut_seq = np.zeros((1,3))
     # optimize!
     if verbose:
       print("Running binder builder...")
