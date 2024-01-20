@@ -513,6 +513,47 @@ class _af_design:
       plddt = plddt[self._target_len:] if self.protocol == "binder" else plddt[:self._len]
       self._k += 1
 
+  def my_binder_builder(self, iters=100, tries=10, dropout=False,
+                        save_best=True, seq_logits=None, e_tries=None, **kwargs):
+
+    '''binder builder'''    
+    if e_tries is None: e_tries = tries
+
+    
+    model_flags = {k:kwargs.pop(k,None) for k in ["num_models","sample_models","models"]}
+    verbose = kwargs.pop("verbose",1)
+
+
+    # optimize!
+    if verbose:
+      print("Running binder builder...")
+    
+    aa_list = [[i] for i in range(0,20,1)]
+    buff = []
+    count=0
+    for a in aa_list:
+      for b in aa_list:
+        for c in aa_list:
+          count+=1
+          print(count,'/ 8000')
+          mut_seq[:,0] = a
+          mut_seq[:,1] = b
+          mut_seq[:,2] = b
+          aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
+          buff.append({"aux":aux, "seq":np.array(mut_seq)})
+    losses = [x["aux"]["loss"] for x in buff]
+    # accept best
+    best = buff[np.argmin(losses)]
+    self.aux, seq = best["aux"], jnp.array(best["seq"])
+    self.set_seq(seq=seq, bias=self._inputs["bias"])
+    self._save_results(save_best=save_best, verbose=verbose)
+  
+    # update plddt
+    plddt = best["aux"]["plddt"]
+    plddt = plddt[self._target_len:] if self.protocol == "binder" else plddt[:self._len]
+    self._k += 1
+
+
   def design_pssm_semigreedy(self, soft_iters=300, hard_iters=32, tries=10, e_tries=None, ramp_recycles=True, ramp_models=True, **kwargs):
     verbose = kwargs.get("verbose",1)
 
