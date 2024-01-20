@@ -556,7 +556,7 @@ class _af_design:
             open(f"log.txt",'w').write(best["aux"]["log"])
           count+=1
           if count > 1:
-            print(f'\r{count}/{19*19*19} - best:{best['aux']['log']}',end='')
+            print(f'\r{count}/{19*19*19}',end='')
           mut_seq[:,0] = a
           mut_seq[:,1] = b
           mut_seq[:,2] = c
