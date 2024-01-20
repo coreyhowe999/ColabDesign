@@ -518,12 +518,20 @@ class _af_design:
   def my_binder_builder(self, save_best=True, **kwargs):
     '''binder builder'''  
 
+
+    # get starting sequence
+    if hasattr(self,"aux"):
+      mut_seq = self.aux["seq"]["logits"].argmax(-1)
+    else:
+      mut_seq = (self._params["seq"] + self._inputs["bias"]).argmax(-1)
+
+    # bias sampling towards the defined bias
+    if seq_logits is None: seq_logits = 0
     
     model_flags = {k:kwargs.pop(k,None) for k in ["num_models","sample_models","models"]}
     model_nums = self._get_model_nums(**model_flags)
     verbose = kwargs.pop("verbose",1)
 
-    mut_seq = np.zeros((3,20))
     print(mut_seq)
     # optimize!
     if verbose:
@@ -549,9 +557,9 @@ class _af_design:
             open(f"log.txt",'w').write(best["aux"]["log"])
           count+=1
           print(count,'/',19*19*19)
-          mut_seq[:,0] = [a]
-          mut_seq[:,1] = [b]
-          mut_seq[:,2] = [c]
+          mut_seq[:,a] = 1.0
+          mut_seq[:,b] = 1.0
+          mut_seq[:,c] = 1.0
           print(mut_seq)
           aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
           buff.append({"aux":aux, "seq":np.array(mut_seq)})
