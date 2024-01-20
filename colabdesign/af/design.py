@@ -527,8 +527,8 @@ class _af_design:
     if verbose:
       print("Running binder builder...")
     
-    aa_list = [[i] for i in range(0,20,1)]
-    aa_not_tried.remove(4)
+    aa_list = [i for i in range(0,20,1)]
+    aa_list.remove(4)
     buff = []
     count=0
     for a in aa_list:
