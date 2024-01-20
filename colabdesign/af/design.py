@@ -514,7 +514,7 @@ class _af_design:
       self._k += 1
 
   def my_binder_builder(self, save_best=True, **kwargs):
-
+    model_nums=1
     '''binder builder'''  
 
     
