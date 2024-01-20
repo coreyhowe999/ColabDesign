@@ -515,8 +515,7 @@ class _af_design:
 
   def my_binder_builder(self, save_best=True, **kwargs):
 
-    '''binder builder'''    
-    if e_tries is None: e_tries = tries
+    '''binder builder'''  
 
     
     model_flags = {k:kwargs.pop(k,None) for k in ["num_models","sample_models","models"]}
