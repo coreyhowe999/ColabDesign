@@ -525,8 +525,6 @@ class _af_design:
     else:
       mut_seq = (self._params["seq"] + self._inputs["bias"]).argmax(-1)
 
-    # bias sampling towards the defined bias
-    if seq_logits is None: seq_logits = 0
     
     model_flags = {k:kwargs.pop(k,None) for k in ["num_models","sample_models","models"]}
     model_nums = self._get_model_nums(**model_flags)
