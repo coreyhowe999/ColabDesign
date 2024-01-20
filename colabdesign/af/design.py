@@ -555,7 +555,7 @@ class _af_design:
             open(f"seq.txt",'w').write(best["seq"])
             open(f"log.txt",'w').write(best["aux"]["log"])
           count+=1
-          print(f'\r{count}/{19*19*19} - best:{best["aux"]["loss"]}',end='')
+          print(f'\r{count}/{19*19*19} - best:{best}',end='')
           mut_seq[:,0] = a
           mut_seq[:,1] = b
           mut_seq[:,2] = c
