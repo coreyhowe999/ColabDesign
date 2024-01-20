@@ -399,6 +399,9 @@ class _af_design:
     # return mutant
     seq_row = np.zeros(20)
     seq_row[a] = 1.0
+    print(seq.shape)
+    print(seq)
+    print(seq[:,0])
     seq[aa_idx_to_mutate,:] = seq_row
     
     return seq, aa_not_tried
