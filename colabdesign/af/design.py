@@ -514,11 +514,11 @@ class _af_design:
       self._k += 1
 
   def my_binder_builder(self, save_best=True, **kwargs):
-    model_nums=1
     '''binder builder'''  
 
     
     model_flags = {k:kwargs.pop(k,None) for k in ["num_models","sample_models","models"]}
+    model_nums = self._get_model_nums(**model_flags)
     verbose = kwargs.pop("verbose",1)
 
     mut_seq = np.zeros((3, 20))
