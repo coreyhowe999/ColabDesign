@@ -397,12 +397,7 @@ class _af_design:
     a = aa_not_tried[rand_int]
     aa_not_tried.remove(a)
     # return mutant
-    seq_row = np.zeros(20)
-    seq_row[a] = 1.0
-    print(seq.shape)
-    print(seq)
-    print(seq[:,0])
-    seq[aa_idx_to_mutate,:] = seq_row
+    seq[:,aa_idx_to_mutate] = [a]
     
     return seq, aa_not_tried
 
@@ -539,16 +534,9 @@ class _af_design:
         for c in aa_list:
           count+=1
           print(count,'/ 8000')
-          seq_row = np.zeros(20)
-          seq_row1 = seq_row
-          seq_row2 = seq_row
-          seq_row2 = seq_row
-          seq_row1[a] = 1.0
-          seq_row2[b] = 1.0
-          seq_row3[c] = 1.0
-          mut_seq[0,:] = seq_row1
-          mut_seq[1,:] = seq_row2
-          mut_seq[2,:] = seq_row3
+          mut_seq[:,0] = [a]
+          mut_seq[:,1] = [b]
+          mut_seq[:,2] = [c]
           aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
           buff.append({"aux":aux, "seq":np.array(mut_seq)})
     losses = [x["aux"]["loss"] for x in buff]
