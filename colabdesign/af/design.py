@@ -524,6 +524,7 @@ class _af_design:
     verbose = kwargs.pop("verbose",1)
 
     mut_seq = np.zeros((3,20))
+    print(mut_seq)
     # optimize!
     if verbose:
       print("Running binder builder...")
@@ -551,6 +552,7 @@ class _af_design:
           mut_seq[:,0] = [a]
           mut_seq[:,1] = [b]
           mut_seq[:,2] = [c]
+          print(mut_seq)
           aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
           buff.append({"aux":aux, "seq":np.array(mut_seq)})
           losses = [x["aux"]["loss"] for x in buff]
