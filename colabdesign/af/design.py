@@ -539,6 +539,7 @@ class _af_design:
     aa_list.remove(4)
     buff = []
     count=0
+    best = []
     for a in aa_list:
       for b in aa_list:
         for c in aa_list:
@@ -554,7 +555,7 @@ class _af_design:
             open(f"seq.txt",'w').write(best["seq"])
             open(f"log.txt",'w').write(best["aux"]["log"])
           count+=1
-          print(f'\r{count}/{19*19*19}',end='')
+          print(f'\r{count}/{19*19*19} - best:{best["aux"]["loss"]}',end='')
           mut_seq[:,0] = a
           mut_seq[:,1] = b
           mut_seq[:,2] = c
