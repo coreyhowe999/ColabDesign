@@ -513,8 +513,7 @@ class _af_design:
       plddt = plddt[self._target_len:] if self.protocol == "binder" else plddt[:self._len]
       self._k += 1
 
-  def my_binder_builder(self, iters=100, tries=10, dropout=False,
-                        save_best=True, seq_logits=None, e_tries=None, **kwargs):
+  def my_binder_builder(self, save_best=True, **kwargs):
 
     '''binder builder'''    
     if e_tries is None: e_tries = tries
