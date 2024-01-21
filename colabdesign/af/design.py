@@ -445,6 +445,7 @@ class _af_design:
       self.aux, seq = best["aux"], jnp.array(best["seq"])
       self.set_seq(seq=seq, bias=self._inputs["bias"])
       self._save_results(save_best=save_best, verbose=verbose)
+      self.save_pdb('best.pdb')
 
       # update plddt
       plddt = best["aux"]["plddt"]
@@ -691,12 +692,12 @@ class _af_design:
 
           kwargs["num_models"] = m + 1
           kwargs["save_best"] = (m + 1) == num_models
-          self.my_design_semigreedy(iters, tries=tries, e_tries=e_tries, **kwargs)
-          #self.design_semigreedy(iters, tries=tries, e_tries=e_tries, **kwargs)
+          #self.my_design_semigreedy(iters, tries=tries, e_tries=e_tries, **kwargs)
+          self.design_semigreedy(iters, tries=tries, e_tries=e_tries, **kwargs)
           if m < 2: iters = iters // 2
       else:
-        self.my_design_semigreedy(hard_iters, tries=tries, e_tries=e_tries, **kwargs)
-        #self.design_semigreedy(iters, tries=tries, e_tries=e_tries, **kwargs)
+        #self.my_design_semigreedy(hard_iters, tries=tries, e_tries=e_tries, **kwargs)
+        self.design_semigreedy(iters, tries=tries, e_tries=e_tries, **kwargs)
 
 ###############################################
 
