@@ -578,22 +578,19 @@ class _af_design:
 
   
 
-#####WIP#####
-def my_binder_builder2(self, save_best=True, **kwargs):
+  #####WIP#####
+  def my_binder_builder2(self, save_best=True, **kwargs):
     '''binder builder'''  
-
     start = time.time()
     # get starting sequence
     if hasattr(self,"aux"):
       mut_seq = self.aux["seq"]["logits"].argmax(-1)
     else:
       mut_seq = (self._params["seq"] + self._inputs["bias"]).argmax(-1)
-
     
     model_flags = {k:kwargs.pop(k,None) for k in ["num_models","sample_models","models"]}
     model_nums = self._get_model_nums(**model_flags)
     verbose = kwargs.pop("verbose",1)
-
     # optimize!
     if verbose:
       print("Running binder builder 2...")
@@ -601,7 +598,6 @@ def my_binder_builder2(self, save_best=True, **kwargs):
     aa_list = [i for i in range(0,20,1)]
     aa_list.remove(4)
     buff = []
-
     #first round
     for a in aa_list:
       mut_seq[:,0] = [a]
@@ -610,11 +606,9 @@ def my_binder_builder2(self, save_best=True, **kwargs):
       losses = [x["aux"]["loss"] for x in buff]
       # accept best
       best = buff[np.argmin(losses)]
-
     print('first round done')
     #get best seq from first round
     mut_seq = best["aux"]["seq"]
-
     max_seq_len = 10
     for i in range(max_seq_len):
       print('seq length:',len(mut_seq[0]))
@@ -641,10 +635,7 @@ def my_binder_builder2(self, save_best=True, **kwargs):
       #get best seq 
       mut_seq = best["aux"]["seq"]
           
-          
-
-
-
+    
     #extra for now
     count=0
     for a in aa_list:
@@ -679,7 +670,6 @@ def my_binder_builder2(self, save_best=True, **kwargs):
     plddt = best["aux"]["plddt"]
     plddt = plddt[self._target_len:] if self.protocol == "binder" else plddt[:self._len]
     self._k += 1
-
   def design_pssm_semigreedy(self, soft_iters=300, hard_iters=32, tries=10, e_tries=None, ramp_recycles=True, ramp_models=True, **kwargs):
     verbose = kwargs.get("verbose",1)
 
