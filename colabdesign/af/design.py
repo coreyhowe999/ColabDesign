@@ -530,7 +530,6 @@ class _af_design:
     model_nums = self._get_model_nums(**model_flags)
     verbose = kwargs.pop("verbose",1)
 
-    print(mut_seq)
     # optimize!
     if verbose:
       print("Running binder builder...")
@@ -577,6 +576,109 @@ class _af_design:
     plddt = plddt[self._target_len:] if self.protocol == "binder" else plddt[:self._len]
     self._k += 1
 
+  
+
+#####WIP#####
+def my_binder_builder2(self, save_best=True, **kwargs):
+    '''binder builder'''  
+
+    start = time.time()
+    # get starting sequence
+    if hasattr(self,"aux"):
+      mut_seq = self.aux["seq"]["logits"].argmax(-1)
+    else:
+      mut_seq = (self._params["seq"] + self._inputs["bias"]).argmax(-1)
+
+    
+    model_flags = {k:kwargs.pop(k,None) for k in ["num_models","sample_models","models"]}
+    model_nums = self._get_model_nums(**model_flags)
+    verbose = kwargs.pop("verbose",1)
+
+    # optimize!
+    if verbose:
+      print("Running binder builder 2...")
+    start = time.time()
+    aa_list = [i for i in range(0,20,1)]
+    aa_list.remove(4)
+    buff = []
+
+    #first round
+    for a in aa_list:
+      mut_seq[:,0] = [a]
+      aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
+      buff.append({"aux":aux, "seq":np.array(mut_seq)})
+      losses = [x["aux"]["loss"] for x in buff]
+      # accept best
+      best = buff[np.argmin(losses)]
+
+    print('first round done')
+    #get best seq from first round
+    mut_seq = best["aux"]["seq"]
+
+    max_seq_len = 10
+    for i in range(max_seq_len):
+      print('seq length:',len(mut_seq[0]))
+      buff = []
+      for aa in aa_list:
+        if (time.time() - start) > (60*60*5.5):
+          seq_len = len(mut_seq[0])
+          aa_seq = np.array([[aa]])
+          
+          #test before
+          before_seq = np.concatenate((aa_seq, mut_seq),axis=1)
+          aux = self.predict(seq=before_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
+          buff.append({"aux":aux, "seq":np.array(mut_seq)})
+
+          #test after
+          after_seq = np.concatenate((mut_seq,aa_seq),axis=1)
+          aux = self.predict(seq=after_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
+          buff.append({"aux":aux, "seq":np.array(mut_seq)})
+          
+      losses = [x["aux"]["loss"] for x in buff]
+      # accept best
+      best = buff[np.argmin(losses)]
+          
+      #get best seq 
+      mut_seq = best["aux"]["seq"]
+          
+          
+
+
+
+    #extra for now
+    count=0
+    for a in aa_list:
+      for b in aa_list:
+        for c in aa_list:
+          if (time.time() - start) > (60*60*5.5):
+            print(a,b,c)
+            losses = [x["aux"]["loss"] for x in buff]
+            # accept best
+            best = buff[np.argmin(losses)]
+            self.aux, seq = best["aux"], jnp.array(best["seq"])
+            self.set_seq(seq=seq, bias=self._inputs["bias"])
+            self._save_results(save_best=save_best, verbose=verbose)
+          count+=1
+          print(count,'/',19*19*19)
+          mut_seq[:,0] = [a]
+          mut_seq[:,1] = [b]
+          mut_seq[:,2] = [c]
+          aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
+          buff.append({"aux":aux, "seq":np.array(mut_seq)})
+          losses = [x["aux"]["loss"] for x in buff]
+          # accept best
+          best = buff[np.argmin(losses)]
+          buff = []
+          buff.append(best)
+    
+    self.aux, seq = best["aux"], jnp.array(best["seq"])
+    self.set_seq(seq=seq, bias=self._inputs["bias"])
+    self._save_results(save_best=save_best, verbose=verbose)
+  
+    # update plddt
+    plddt = best["aux"]["plddt"]
+    plddt = plddt[self._target_len:] if self.protocol == "binder" else plddt[:self._len]
+    self._k += 1
 
   def design_pssm_semigreedy(self, soft_iters=300, hard_iters=32, tries=10, e_tries=None, ramp_recycles=True, ramp_models=True, **kwargs):
     verbose = kwargs.get("verbose",1)
