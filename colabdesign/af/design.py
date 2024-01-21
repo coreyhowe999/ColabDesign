@@ -489,7 +489,7 @@ class _af_design:
       num_tries = 0
       plddt_idx_sorted = np.argsort(plddt)
       aa_try_idx = 0
-      while current_loss >= prev_loss and aa_try_idx < 2: #len(plddt_idx_sorted):
+      while current_loss >= prev_loss and aa_try_idx< len(plddt_idx_sorted): # and aa_try_idx < 2
         num_tries+=1
         if len(aa_not_tried) <1:
           aa_try_idx+=1
