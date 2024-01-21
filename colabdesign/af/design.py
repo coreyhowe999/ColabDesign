@@ -391,7 +391,7 @@ class _af_design:
       kwargs["num_models"] = len(self._model_names)
       self.design_hard(hard_iters, temp=1e-2, **kwargs)
 
-  def _mutate(self, seq, plddt=None, logits=None, mutation_rate=1,aa_not_tried=None,aa_idx_to_mutate=None):
+  def my_mutate(self, seq, plddt=None, logits=None, mutation_rate=1,aa_not_tried=None,aa_idx_to_mutate=None):
     '''mutate random position'''
     seq = np.array(seq)
     rand_int = random.randint(0, len(aa_not_tried)-1)
@@ -401,6 +401,41 @@ class _af_design:
     seq[:,aa_idx_to_mutate] = a
     
     return seq, aa_not_tried
+
+
+  def _mutate(self, seq, plddt=None, logits=None, mutation_rate=1):
+    '''mutate random position'''
+    seq = np.array(seq)
+    N,L = seq.shape
+
+    # fix some positions
+    i_prob = np.ones(L) if plddt is None else np.maximum(1-plddt,0)
+    i_prob[np.isnan(i_prob)] = 0
+    if "fix_pos" in self.opt:
+      if "pos" in self.opt:
+        p = self.opt["pos"][self.opt["fix_pos"]]
+        seq[...,p] = self._wt_aatype_sub
+      else:
+        p = self.opt["fix_pos"]
+        seq[...,p] = self._wt_aatype[...,p]
+      i_prob[p] = 0
+    
+    for m in range(mutation_rate):
+      # sample position
+      # https://www.biorxiv.org/content/10.1101/2021.08.24.457549v1
+      i = np.random.choice(np.arange(L),p=i_prob/i_prob.sum())
+
+      # sample amino acid
+      logits = np.array(0 if logits is None else logits)
+      if logits.ndim == 3: logits = logits[:,i]
+      elif logits.ndim == 2: logits = logits[i]
+      a_logits = logits - np.eye(self._args["alphabet_size"])[seq[:,i]] * 1e8
+      a = categorical(softmax(a_logits))
+
+      # return mutant
+      seq[:,i] = a
+    
+    return seq
 
   def design_semigreedy(self, iters=100, tries=10, dropout=False,
                         save_best=True, seq_logits=None, e_tries=None, **kwargs):
