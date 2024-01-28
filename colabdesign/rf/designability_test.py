@@ -73,6 +73,7 @@ def main(argv):
   free_chains = []
   both_chains = []
   for pos,(fixed_chain,free_chain) in info:
+    print(pos,(fixed_chain,free_chain))
     fixed_pos += pos
     fixed_chains += [fixed_chain and not free_chain]
     free_chains += [free_chain and not fixed_chain]
