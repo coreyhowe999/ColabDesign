@@ -77,7 +77,10 @@ def main(argv):
     fixed_chains += [fixed_chain and not free_chain]
     free_chains += [free_chain and not fixed_chain]
     both_chains += [fixed_chain and free_chain]
-
+  print(fixed_pos)
+  print(fixed_chains)
+  print(free_chains)
+  print(both_chains)
   flags = {"initial_guess":o.initial_guess,
            "best_metric":"rmsd",
            "use_multimer":o.use_multimer,
