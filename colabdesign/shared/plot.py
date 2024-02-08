@@ -332,6 +332,6 @@ def make_animation(seq, movie_file=None,con=None, xyz=None, plddt=None, pae=None
 
   # make animation!
   ani = animation.ArtistAnimation(fig, ims, blit=True, interval=interval)
-  ani.save(movie_file)
+  ani.save(movie_file,writer=animation.PillowWriter(fps=25))
   plt.close()
   return ani.to_html5_video()
