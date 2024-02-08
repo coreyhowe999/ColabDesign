@@ -193,7 +193,7 @@ def plot_ticks(ax, Ls, Ln=None, add_yticks=False):
     ticks = (ticks[1:] + ticks[:-1])/2
     ax.yticks(ticks,alphabet_list[:len(ticks)])
 
-def make_animation(seq, con=None, xyz=None, plddt=None, pae=None,
+def make_animation(seq,movie_file=movie_file, con=None, xyz=None, plddt=None, pae=None,
                    losses=None, pos_ref=None, line_w=2.0,
                    dpi=100, interval=60, color_msa="Taylor",
                    length=None, align_xyz=True, color_by="plddt", **kwargs):
@@ -332,5 +332,6 @@ def make_animation(seq, con=None, xyz=None, plddt=None, pae=None,
 
   # make animation!
   ani = animation.ArtistAnimation(fig, ims, blit=True, interval=interval)
+  ani.save(movie_file)
   plt.close()
   return ani.to_html5_video()
