@@ -554,6 +554,7 @@ class _af_design:
       losses = [x["aux"]["loss"] for x in buff]
       prev_loss = current_loss
       # accept best
+      print('loss:',losses)
       best = buff[np.argmin(losses)]
       self.aux, seq = best["aux"], jnp.array(best["seq"])
       self.set_seq(seq=seq, bias=self._inputs["bias"])
@@ -562,7 +563,7 @@ class _af_design:
 
       scores.loc[i,'loss'] = prev_loss
       scores.loc[i,'num_tries'] = num_tries
-      scores.loc[i,'seq'] = self.get_seqs()
+      scores.loc[i,'seq'] = self.get_seqs()[0]
       for key in self.aux["log"]:
         scores.loc[i,key] = self.aux["log"][key]
       scores.to_csv('scores.csv',index=None)
