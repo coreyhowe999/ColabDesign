@@ -537,7 +537,7 @@ class _af_design:
         current_loss = aux["loss"]
         
       print('num tries to improvement:',num_tries)
-      print('num residdes tried:',aa_try_idx+1)
+      print('num residues tried:',aa_try_idx+1)
       losses = [x["aux"]["loss"] for x in buff]
       prev_loss = current_loss
       # accept best
@@ -733,6 +733,32 @@ class _af_design:
       else:
         #self.my_design_semigreedy(hard_iters, tries=tries, e_tries=e_tries, **kwargs)
         self.design_semigreedy(iters, tries=tries, e_tries=e_tries, **kwargs)
+
+  def my_design_pssm_semigreedy(self, soft_iters=300, hard_iters=32, tries=10, e_tries=None, ramp_recycles=True, ramp_models=True, **kwargs):
+    verbose = kwargs.get("verbose",1)
+
+    # stage 1: logits -> softmax(logits)
+    if soft_iters > 0:
+      self.design_3stage(soft_iters, 0, 0, ramp_recycles=ramp_recycles, **kwargs)
+      self._tmp["seq_logits"] = kwargs["seq_logits"] = self.aux["seq"]["logits"]
+
+    # stage 2: semi_greedy
+    if hard_iters > 0:
+      kwargs["dropout"] = False
+      if ramp_models:
+        num_models = len(kwargs.get("models",self._model_names))
+        iters = hard_iters
+        for m in range(num_models):
+          if verbose and m > 0: print(f'Increasing number of models to {m+1}.')
+
+          kwargs["num_models"] = m + 1
+          kwargs["save_best"] = (m + 1) == num_models
+          self.my_design_semigreedy(iters, tries=tries, e_tries=e_tries, **kwargs)
+          #self.design_semigreedy(iters, tries=tries, e_tries=e_tries, **kwargs)
+          if m < 2: iters = iters // 2
+      else:
+        self.my_design_semigreedy(hard_iters, tries=tries, e_tries=e_tries, **kwargs)
+        #self.design_semigreedy(iters, tries=tries, e_tries=e_tries, **kwargs)
 
 ###############################################
 
