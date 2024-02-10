@@ -518,10 +518,10 @@ class _af_design:
     scores['loss'] = np.nan
     scores['num_tries'] = np.nan
     scores['seq'] = self.aux["seq"]
-    print(self.aux["log"])
-    print(self.aux)
     for key in self.aux["log"]:
-      scores[key] = self.aux["log"][key]
+      print(key)
+      print(self.aux["log"][key])
+      scores[str(key)] = self.aux["log"][key]
 
     # optimize!
     if verbose:
