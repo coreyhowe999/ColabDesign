@@ -525,7 +525,7 @@ class _af_design:
     if verbose:
       print("Running my semigreedy optimization...")
     
-    prev_loss = 10000
+    prev_loss = 1000
     current_loss = 10000
     aa_not_tried = [i for i in range(0,20,1)]
     aa_not_tried.remove(4)
@@ -546,7 +546,7 @@ class _af_design:
         aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
         buff.append({"aux":aux, "seq":np.array(mut_seq)})
         current_loss = aux["loss"]
-        print('best loss:',prev_loss,'candidate:',current_loss)
+        #print('best loss:',prev_loss,'candidate:',current_loss)
         
         
       print('num tries to improvement:',num_tries)
@@ -554,7 +554,7 @@ class _af_design:
       losses = [x["aux"]["loss"] for x in buff]
       prev_loss = current_loss
       # accept best
-      print('loss:',losses)
+      #print('loss:',losses)
       best = buff[np.argmin(losses)]
       self.aux, seq = best["aux"], jnp.array(best["seq"])
       self.set_seq(seq=seq, bias=self._inputs["bias"])
