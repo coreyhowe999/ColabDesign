@@ -5,6 +5,7 @@ import numpy as np
 from colabdesign.af.alphafold.common import residue_constants
 from colabdesign.shared.utils import copy_dict, update_dict, Key, dict_to_str, to_float, softmax, categorical, to_list, copy_missing
 import time
+import pandas as pd
 
 ####################################################
 # AF_DESIGN - design functions
@@ -519,6 +520,7 @@ class _af_design:
     current_loss = 10000
     aa_not_tried = [i for i in range(0,20,1)]
     aa_not_tried.remove(4)
+    scores = pd.DataFrame()
     for i in range(iters):
       buff = []
       model_nums = self._get_model_nums(**model_flags)
@@ -537,6 +539,7 @@ class _af_design:
         current_loss = aux["loss"]
         print('best loss:',prev_loss,'candidate:',current_loss)
         
+        
       print('num tries to improvement:',num_tries)
       print('num residues tried:',aa_try_idx+1)
       losses = [x["aux"]["loss"] for x in buff]
@@ -546,8 +549,14 @@ class _af_design:
       self.aux, seq = best["aux"], jnp.array(best["seq"])
       self.set_seq(seq=seq, bias=self._inputs["bias"])
       self._save_results(save_best=save_best, verbose=verbose)
-      self.save_pdb('best.pdb')
-      #print(seq)
+      self.save_pdb(f'best.pdb')
+
+      scores.loc[i,'loss'] = prev_loss
+      scores.loc[i,'num_tries'] = num_tries
+      scores.loc[i,'seq'] = best["seq"]
+      scores.loc[i,'plddt'] = best["plddt"]
+      scores.loc[i,'i_pae'] = best["i_pae"]
+      scores.to_csv('scores.csv',index=None)
   
       # update plddt
       plddt = best["aux"]["plddt"]
