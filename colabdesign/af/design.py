@@ -520,7 +520,7 @@ class _af_design:
     scores.loc[0,'seq'] = self.get_seqs()
     for key in self.aux["log"]:
       scores.loc[0,key] = self.aux["log"][key]
-
+    scores.to_csv('scores.csv',index=None)
     # optimize!
     if verbose:
       print("Running my semigreedy optimization...")
@@ -546,7 +546,7 @@ class _af_design:
         aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
         buff.append({"aux":aux, "seq":np.array(mut_seq)})
         current_loss = aux["loss"]
-        #print('best loss:',prev_loss,'candidate:',current_loss)
+        print('best loss:',prev_loss,'candidate:',current_loss)
         
         
       print('num tries to improvement:',num_tries)
