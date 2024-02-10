@@ -515,13 +515,13 @@ class _af_design:
     
     #get initial score
     scores = pd.DataFrame()
-    scores['loss'] = np.nan
-    scores['num_tries'] = np.nan
-    scores['seq'] = self.aux["seq"]
+    scores.loc[0,'loss'] = np.nan
+    scores.loc[0,'num_tries'] = np.nan
+    scores.loc[0,'seq'] = self.aux["seq"]
     for key in self.aux["log"]:
       print(key)
       print(self.aux["log"][key])
-      scores[str(key)] = self.aux["log"][key]
+      scores.loc[0,str(key)] = self.aux["log"][key]
 
     # optimize!
     if verbose:
