@@ -519,9 +519,7 @@ class _af_design:
     scores.loc[0,'num_tries'] = np.nan
     scores.loc[0,'seq'] = self.get_seqs()
     for key in self.aux["log"]:
-      print(key)
-      print(self.aux["log"][key])
-      scores.loc[0,str(key)] = self.aux["log"][key]
+      scores.loc[0,key] = self.aux["log"][key]
 
     # optimize!
     if verbose:
@@ -564,9 +562,9 @@ class _af_design:
 
       scores.loc[i,'loss'] = prev_loss
       scores.loc[i,'num_tries'] = num_tries
-      scores.loc[i,'seq'] = best["seq"]
+      scores.loc[i,'seq'] = self.get_seqs()
       for key in self.aux["log"]:
-        scores.loc[0,key] = self.aux["log"][key]
+        scores.loc[i,key] = self.aux["log"][key]
       scores.to_csv('scores.csv',index=None)
   
       # update plddt
