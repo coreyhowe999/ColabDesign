@@ -515,11 +515,11 @@ class _af_design:
     
     #get initial score
     scores = pd.DataFrame()
-    scores.loc[i,'loss'] = np.nan
-    scores.loc[i,'num_tries'] = np.nan
-    scores.loc[i,'seq'] = best["seq"]
-    scores.loc[i,'plddt'] = plddt
-    scores.loc[i,'i_pae'] = best["i_pae"]
+    scores.loc[0,'loss'] = np.nan
+    scores.loc[0,'num_tries'] = np.nan
+    scores.loc[0,'seq'] = self.aux["seq"]
+    for key in self.aux["log"]:
+      scores.loc[0,key] = self.aux["log"][key]
 
     # optimize!
     if verbose:
@@ -530,7 +530,7 @@ class _af_design:
     aa_not_tried = [i for i in range(0,20,1)]
     aa_not_tried.remove(4)
     
-    for i in range(iters):
+    for i in range(1,iters):
       buff = []
       model_nums = self._get_model_nums(**model_flags)
       num_tries = 0
@@ -563,8 +563,8 @@ class _af_design:
       scores.loc[i,'loss'] = prev_loss
       scores.loc[i,'num_tries'] = num_tries
       scores.loc[i,'seq'] = best["seq"]
-      scores.loc[i,'plddt'] = best["plddt"]
-      scores.loc[i,'i_pae'] = best["i_pae"]
+      for key in self.aux["log"]:
+        scores.loc[0,key] = self.aux["log"][key]
       scores.to_csv('scores.csv',index=None)
   
       # update plddt
