@@ -547,7 +547,7 @@ class _af_design:
       self.set_seq(seq=seq, bias=self._inputs["bias"])
       self._save_results(save_best=save_best, verbose=verbose)
       self.save_pdb('best.pdb')
-      print(seq)
+      #print(seq)
   
       # update plddt
       plddt = best["aux"]["plddt"]
