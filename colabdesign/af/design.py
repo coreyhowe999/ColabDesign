@@ -507,10 +507,19 @@ class _af_design:
     model_flags = {k:kwargs.pop(k,None) for k in ["num_models","sample_models","models"]}
     verbose = kwargs.pop("verbose",1)
 
+                          
     # get current plddt
     aux = self.predict(seq, return_aux=True, verbose=False, **model_flags, **kwargs)
     plddt = self.aux["plddt"]
     plddt = plddt[self._target_len:] if self.protocol == "binder" else plddt[:self._len]
+    
+    #get initial score
+    scores = pd.DataFrame()
+    scores.loc[i,'loss'] = np.nan
+    scores.loc[i,'num_tries'] = np.nan
+    scores.loc[i,'seq'] = best["seq"]
+    scores.loc[i,'plddt'] = plddt
+    scores.loc[i,'i_pae'] = best["i_pae"]
 
     # optimize!
     if verbose:
@@ -520,7 +529,7 @@ class _af_design:
     current_loss = 10000
     aa_not_tried = [i for i in range(0,20,1)]
     aa_not_tried.remove(4)
-    scores = pd.DataFrame()
+    
     for i in range(iters):
       buff = []
       model_nums = self._get_model_nums(**model_flags)
