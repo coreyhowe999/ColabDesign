@@ -517,7 +517,7 @@ class _af_design:
     scores = pd.DataFrame()
     scores.loc[0,'loss'] = np.nan
     scores.loc[0,'num_tries'] = np.nan
-    scores.loc[0,'seq'] = self.aux["seq"]
+    scores.loc[0,'seq'] = self.get_seqs()
     for key in self.aux["log"]:
       print(key)
       print(self.aux["log"][key])
