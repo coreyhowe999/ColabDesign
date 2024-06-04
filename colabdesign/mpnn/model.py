@@ -76,6 +76,8 @@ class mk_mpnn_model():
     if rm_aa is not None:
       for aa in rm_aa.split(","):
         self._inputs["bias"][...,aa_order[aa]] -= 1e6
+        print(aa_order)
+        print(self._inputs["bias"])
     
     if fix_pos is not None:
       p = prep_pos(fix_pos, **pdb["idx"])["pos"]
