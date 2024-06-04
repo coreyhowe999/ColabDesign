@@ -536,14 +536,19 @@ class _af_design:
       buff = []
       model_nums = self._get_model_nums(**model_flags)
       num_tries = 0
+      plddt_copy = plddt.copy()
+      np.delete(plddt_copy,np.array(fix_aa))
       plddt_idx_sorted = np.argsort(plddt)
+      print(np.array(fix_aa))
       print('plddt_idx_sorted BEFORE:',plddt_idx_sorted)
-      plddt_idx_sorted = np.setdiff1d(plddt_idx_sorted, np.array(fix_aa))
+      plddt_idx_sorted = np.argsort(plddt_copy)
       print('plddt_idx_sorted AFTER:',plddt_idx_sorted)
       aa_try_idx = 0
+      
       #fix_aa here
       aa_idx_to_mutate = plddt_idx_sorted[aa_try_idx]
       aa_not_tried.remove(seq[aa_idx_to_mutate])
+      
       while current_loss > prev_loss and aa_try_idx< (len(seq[0])-1): # and aa_try_idx < 2
         num_tries+=1
         if len(aa_not_tried) <1:
@@ -559,7 +564,7 @@ class _af_design:
         aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
         buff.append({"aux":aux, "seq":np.array(mut_seq)})
         current_loss = aux["loss"]
-        #print('best loss:',prev_loss,'candidate:',current_loss)
+        print('best loss:',prev_loss,'candidate:',current_loss)
         
         
       print('num tries to improvement:',num_tries)
