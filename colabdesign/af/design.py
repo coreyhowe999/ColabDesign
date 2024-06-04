@@ -491,7 +491,7 @@ class _af_design:
 ###########################################
 
   
-  def my_seq_redesign(self, iters=100, tries=10, dropout=False,omit_aa=omit_aa,
+  def my_seq_redesign(self, iters=100, tries=10, dropout=False,omit_aa=None,
                         save_best=True, seq_logits=None, e_tries=None, **kwargs):
 
     '''semigreedy search'''    
