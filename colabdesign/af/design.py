@@ -491,18 +491,18 @@ class _af_design:
 ###########################################
 
   
-  def my_seq_redesign(self, iters=100, tries=10, dropout=False,omit_aa=None,
+  def my_seq_redesign(self, iters=100, tries=10, dropout=False,omit_aa=None,seq=None,
                         save_best=True, seq_logits=None, e_tries=None, **kwargs):
 
     '''semigreedy search'''    
     if e_tries is None: e_tries = tries
 
     # get starting sequence
-    if hasattr(self,"aux"):
-      seq = self.aux["seq"]["logits"].argmax(-1)
-    else:
-      seq = (self._params["seq"] + self._inputs["bias"]).argmax(-1)
-
+    #if hasattr(self,"aux"):
+    #  seq = self.aux["seq"]["logits"].argmax(-1)
+    #else:
+    #  seq = (self._params["seq"] + self._inputs["bias"]).argmax(-1)
+                          
     print('seq:',seq)
     # bias sampling towards the defined bias
     if seq_logits is None: seq_logits = 0
@@ -531,7 +531,6 @@ class _af_design:
     prev_loss = 1000
     current_loss = 10000
     aa_not_tried = [i for i in range(0,20,1)]
-    aa_not_tried.remove(4)
     
     for i in range(1,iters):
       buff = []
