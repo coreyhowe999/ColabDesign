@@ -537,24 +537,23 @@ class _af_design:
       model_nums = self._get_model_nums(**model_flags)
       num_tries = 0
       plddt_idx_sorted = np.argsort(plddt)
-      print('self.aux["plddt"]',self.aux["plddt"])
       print('plddt_idx_sorted BEFORE:',plddt_idx_sorted)
-      
-      arr1 = np.array([1, 2, 3, 4, 5])
-      arr2 = np.array([6, 1, 7, 2, 8])
-      
       plddt_idx_sorted = np.setdiff1d(plddt_idx_sorted, np.array(fix_aa))
       print('plddt_idx_sorted AFTER:',plddt_idx_sorted)
       aa_try_idx = 0
+      #fix_aa here
+      aa_idx_to_mutate = plddt_idx_sorted[aa_try_idx]
+      aa_not_tried.remove(seq[aa_idx_to_mutate])
       while current_loss > prev_loss and aa_try_idx< (len(seq[0])-1): # and aa_try_idx < 2
         num_tries+=1
         if len(aa_not_tried) <1:
           aa_try_idx+=1
           aa_not_tried = [i for i in range(0,20,1)]
-          
           #omit aa here
+          aa_not_tried.remove(seq[aa_idx_to_mutate])
+          
 
-        #fix aa here
+  
         aa_idx_to_mutate = plddt_idx_sorted[aa_try_idx]
         mut_seq,aa_not_tried = self.my_mutate(seq=seq, plddt=plddt, logits=seq_logits + self._inputs["bias"], aa_not_tried=aa_not_tried,aa_idx_to_mutate=aa_idx_to_mutate)
         aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
