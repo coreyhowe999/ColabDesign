@@ -489,6 +489,97 @@ class _af_design:
       self._k += 1
 
 ###########################################
+
+  
+  def my_seq_redesign(self, iters=100, tries=10, dropout=False,omit_aa=omit_aa,
+                        save_best=True, seq_logits=None, e_tries=None, **kwargs):
+
+    '''semigreedy search'''    
+    if e_tries is None: e_tries = tries
+
+    # get starting sequence
+    if hasattr(self,"aux"):
+      seq = self.aux["seq"]["logits"].argmax(-1)
+    else:
+      seq = (self._params["seq"] + self._inputs["bias"]).argmax(-1)
+
+    # bias sampling towards the defined bias
+    if seq_logits is None: seq_logits = 0
+    
+    model_flags = {k:kwargs.pop(k,None) for k in ["num_models","sample_models","models"]}
+    verbose = kwargs.pop("verbose",1)
+
+                          
+    # get current plddt
+    aux = self.predict(seq, return_aux=True, verbose=False, **model_flags, **kwargs)
+    plddt = self.aux["plddt"]
+    plddt = plddt[self._target_len:] if self.protocol == "binder" else plddt[:self._len]
+    
+    #get initial score
+    scores = pd.DataFrame()
+    scores.loc[0,'loss'] = np.nan
+    scores.loc[0,'num_tries'] = np.nan
+    scores.loc[0,'seq'] = self.get_seqs()
+    for key in self.aux["log"]:
+      scores.loc[0,key] = self.aux["log"][key]
+    scores.to_csv('scores.csv',index=None)
+    # optimize!
+    if verbose:
+      print("Running my seq redesign...")
+    
+    prev_loss = 1000
+    current_loss = 10000
+    aa_not_tried = [i for i in range(0,20,1)]
+    aa_not_tried.remove(4)
+    
+    for i in range(1,iters):
+      buff = []
+      model_nums = self._get_model_nums(**model_flags)
+      num_tries = 0
+      plddt_idx_sorted = np.argsort(plddt)
+      
+      #remove fix pos
+      
+
+      
+      aa_try_idx = 0
+      while current_loss > prev_loss and aa_try_idx< (len(seq[0])-1): # and aa_try_idx < 2
+        num_tries+=1
+        if len(aa_not_tried) <1:
+          aa_try_idx+=1
+          aa_not_tried = [i for i in range(0,20,1)]
+        aa_idx_to_mutate = plddt_idx_sorted[aa_try_idx]
+        mut_seq,aa_not_tried = self.my_mutate(seq=seq, plddt=plddt, logits=seq_logits + self._inputs["bias"], aa_not_tried=aa_not_tried,aa_idx_to_mutate=aa_idx_to_mutate)
+        aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
+        buff.append({"aux":aux, "seq":np.array(mut_seq)})
+        current_loss = aux["loss"]
+        #print('best loss:',prev_loss,'candidate:',current_loss)
+        
+        
+      print('num tries to improvement:',num_tries)
+      print('num residues tried:',aa_try_idx+1)
+      losses = [x["aux"]["loss"] for x in buff]
+      prev_loss = current_loss
+      # accept best
+      #print('loss:',losses)
+      best = buff[np.argmin(losses)]
+      self.aux, seq = best["aux"], jnp.array(best["seq"])
+      self.set_seq(seq=seq, bias=self._inputs["bias"])
+      self._save_results(save_best=save_best, verbose=verbose)
+      self.save_pdb(f'best.pdb')
+
+      scores.loc[i,'loss'] = prev_loss
+      scores.loc[i,'num_tries'] = num_tries
+      scores.loc[i,'seq'] = self.get_seqs()[0]
+      for key in self.aux["log"]:
+        scores.loc[i,key] = self.aux["log"][key]
+      scores.to_csv('scores.csv',index=None)
+  
+      # update plddt
+      plddt = best["aux"]["plddt"]
+      plddt = plddt[self._target_len:] if self.protocol == "binder" else plddt[:self._len]
+      self._k += 1
+  
   def my_design_semigreedy(self, iters=100, tries=10, dropout=False,
                         save_best=True, seq_logits=None, e_tries=None, **kwargs):
 
