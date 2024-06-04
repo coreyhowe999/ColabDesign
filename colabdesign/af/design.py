@@ -491,7 +491,7 @@ class _af_design:
 ###########################################
 
   
-  def my_seq_redesign(self, iters=100, tries=10, dropout=False,omit_aa=None,seq=None,
+  def my_seq_redesign(self, iters=100, tries=10, dropout=False,fix_aa=None,omit_aa=None,seq=None,
                         save_best=True, seq_logits=None, e_tries=None, **kwargs):
 
     '''semigreedy search'''    
@@ -538,16 +538,23 @@ class _af_design:
       num_tries = 0
       plddt_idx_sorted = np.argsort(plddt)
       print('self.aux["plddt"]',self.aux["plddt"])
-      print('plddt_idx_sorted:',plddt_idx_sorted)
-      print('plddt[0]:',plddt_idx_sorted[0])
+      print('plddt_idx_sorted BEFORE:',plddt_idx_sorted)
       
+      arr1 = np.array([1, 2, 3, 4, 5])
+      arr2 = np.array([6, 1, 7, 2, 8])
       
+      plddt_idx_sorted = np.setdiff1d(plddt_idx_sorted, np.array(fix_aa))
+      print('plddt_idx_sorted AFTER:',plddt_idx_sorted)
       aa_try_idx = 0
       while current_loss > prev_loss and aa_try_idx< (len(seq[0])-1): # and aa_try_idx < 2
         num_tries+=1
         if len(aa_not_tried) <1:
           aa_try_idx+=1
           aa_not_tried = [i for i in range(0,20,1)]
+          
+          #omit aa here
+
+        #fix aa here
         aa_idx_to_mutate = plddt_idx_sorted[aa_try_idx]
         mut_seq,aa_not_tried = self.my_mutate(seq=seq, plddt=plddt, logits=seq_logits + self._inputs["bias"], aa_not_tried=aa_not_tried,aa_idx_to_mutate=aa_idx_to_mutate)
         aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
