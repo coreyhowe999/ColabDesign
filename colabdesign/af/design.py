@@ -538,8 +538,9 @@ class _af_design:
       model_nums = self._get_model_nums(**model_flags)
       num_tries = 0
       plddt_idx_sorted = np.argsort(plddt)
-      
-      print(plddt_idx_sorted)
+      print('self.aux["plddt"]',self.aux["plddt"])
+      print('plddt_idx_sorted:',plddt_idx_sorted)
+      print('plddt[0]:',plddt_idx_sorted[0])
       
       
       aa_try_idx = 0
