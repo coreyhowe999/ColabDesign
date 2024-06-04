@@ -503,6 +503,7 @@ class _af_design:
     else:
       seq = (self._params["seq"] + self._inputs["bias"]).argmax(-1)
 
+    print('seq:',seq)
     # bias sampling towards the defined bias
     if seq_logits is None: seq_logits = 0
     
@@ -538,9 +539,8 @@ class _af_design:
       num_tries = 0
       plddt_idx_sorted = np.argsort(plddt)
       
-      #remove fix pos
+      print(plddt_idx_sorted)
       
-
       
       aa_try_idx = 0
       while current_loss > prev_loss and aa_try_idx< (len(seq[0])-1): # and aa_try_idx < 2
