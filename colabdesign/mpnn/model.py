@@ -55,7 +55,7 @@ class mk_mpnn_model():
 
   def prep_inputs(self, pdb_filename=None, chain=None, homooligomer=False,
                   ignore_missing=True, fix_pos=None, inverse=False,
-                  rm_aa=None, verbose=False, **kwargs):
+                  rm_aa=None,omit_aa=None, verbose=False, **kwargs):
     
     '''get inputs from input pdb'''
     pdb = prep_pdb(pdb_filename, chain, ignore_missing=ignore_missing)
@@ -76,9 +76,11 @@ class mk_mpnn_model():
     if rm_aa is not None:
       for aa in rm_aa.split(","):
         self._inputs["bias"][...,aa_order[aa]] -= 1e6
-        print(aa_order)
-        print(self._inputs["bias"])
-    
+
+   if omit_aa is not None:
+     for res_num in change_res_dict.keys():
+       self._inputs["bias"][int(res_num)-1,aa_order[change_res_dict[res_num]]] -= 1e6
+                    
     if fix_pos is not None:
       p = prep_pos(fix_pos, **pdb["idx"])["pos"]
       if inverse:
