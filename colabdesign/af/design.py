@@ -552,9 +552,9 @@ class _af_design:
       #fix_aa here
       fix = np.array([int(i) for i in fix_aa.split(',')])
       plddt_idx_sorted = np.argsort(plddt)
-      print('plddt_idx_sorted BEFORE:',plddt_idx_sorted)
+      #print('plddt_idx_sorted BEFORE:',plddt_idx_sorted)
       plddt_idx_sorted = np.delete(plddt_idx_sorted,fix)
-      print('plddt_idx_sorted AFTER:',plddt_idx_sorted)
+      #print('plddt_idx_sorted AFTER:',plddt_idx_sorted)
       aa_try_idx = 0
 
       aa_idx_to_mutate = plddt_idx_sorted[aa_try_idx]
@@ -563,7 +563,7 @@ class _af_design:
       if seq[aa_idx_to_mutate] in aa_not_tried:
         aa_not_tried.remove(seq[aa_idx_to_mutate])
       
-      while current_loss > prev_loss and aa_try_idx< (len(seq)-1): # and aa_try_idx < 2
+      while current_loss >= prev_loss and aa_try_idx< (len(seq)-1): # and aa_try_idx < 2
         num_tries+=1
         if len(aa_not_tried) <1:
           aa_try_idx+=1
@@ -571,8 +571,6 @@ class _af_design:
           #omit aa here part2
           aa_not_tried.remove(seq[aa_idx_to_mutate])
           
-
-  
         aa_idx_to_mutate = plddt_idx_sorted[aa_try_idx]
         mut_seq,aa_not_tried = self.my_redesign_mutate(seq=seq, plddt=plddt, logits=seq_logits + self._inputs["bias"], aa_not_tried=aa_not_tried,aa_idx_to_mutate=aa_idx_to_mutate)
         aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
@@ -587,10 +585,6 @@ class _af_design:
       prev_loss = current_loss
       # accept best
       #print('loss:',losses)
-      print(mut_seq)
-      print(np.array(mut_seq))
-      print(buff)
-      print(losses)
       best = buff[np.argmin(losses)]
       self.aux, seq = best["aux"], jnp.array(best["seq"])
       self.set_seq(seq=seq, bias=self._inputs["bias"])
