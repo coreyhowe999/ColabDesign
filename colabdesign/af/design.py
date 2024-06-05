@@ -537,17 +537,16 @@ class _af_design:
       buff = []
       model_nums = self._get_model_nums(**model_flags)
       num_tries = 0
+      
       #fix_aa here
-      plddt_copy = plddt.copy()
       fix = np.array([int(i) for i in fix_aa.split(',')])
-      plddt_copy = np.delete(plddt_copy,fix)
       plddt_idx_sorted = np.argsort(plddt)
-      print('plddt:',plddt)
-      print('plddt_copy:',plddt_copy)
       print('plddt_idx_sorted BEFORE:',plddt_idx_sorted)
-      plddt_idx_sorted = np.argsort(plddt_copy)
+      plddt_idx_sorted = np.delete(plddt_idx_sorted,fix)
       print('plddt_idx_sorted AFTER:',plddt_idx_sorted)
       aa_try_idx = 0
+
+      aa_idx_to_mutate = plddt_idx_sorted[aa_try_idx]
       
       #omit aa here part1
       aa_not_tried.remove(seq[aa_idx_to_mutate])
