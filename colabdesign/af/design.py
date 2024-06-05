@@ -537,7 +537,7 @@ class _af_design:
       model_nums = self._get_model_nums(**model_flags)
       num_tries = 0
       plddt_copy = plddt.copy()
-      np.delete(plddt_copy,np.array(fix_aa))
+      np.delete(plddt_copy,np.array(fix_aa).astype(int))
       plddt_idx_sorted = np.argsort(plddt)
       print(np.array(fix_aa))
       print('plddt_idx_sorted BEFORE:',plddt_idx_sorted)
