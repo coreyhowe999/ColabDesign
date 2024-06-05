@@ -403,7 +403,7 @@ class _af_design:
     
     return seq, aa_not_tried
 
-   def my_redesign_mutate(self, seq, plddt=None, logits=None, mutation_rate=1,aa_not_tried=None,aa_idx_to_mutate=None):
+  def my_redesign_mutate(self, seq, plddt=None, logits=None, mutation_rate=1,aa_not_tried=None,aa_idx_to_mutate=None):
     '''mutate random position'''
     seq = np.array(seq)
     rand_int = random.randint(0, len(aa_not_tried)-1)
