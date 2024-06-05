@@ -560,7 +560,8 @@ class _af_design:
       aa_idx_to_mutate = plddt_idx_sorted[aa_try_idx]
       
       #omit aa here part1
-      aa_not_tried.remove(seq[aa_idx_to_mutate])
+      if seq[aa_idx_to_mutate] in aa_not_tried:
+        aa_not_tried.remove(seq[aa_idx_to_mutate])
       
       while current_loss > prev_loss and aa_try_idx< (len(seq)-1): # and aa_try_idx < 2
         num_tries+=1
