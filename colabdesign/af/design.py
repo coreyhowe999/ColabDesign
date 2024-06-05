@@ -403,6 +403,17 @@ class _af_design:
     
     return seq, aa_not_tried
 
+   def my_redesign_mutate(self, seq, plddt=None, logits=None, mutation_rate=1,aa_not_tried=None,aa_idx_to_mutate=None):
+    '''mutate random position'''
+    seq = np.array(seq)
+    rand_int = random.randint(0, len(aa_not_tried)-1)
+    a = aa_not_tried[rand_int]
+    aa_not_tried.remove(a)
+    # return mutant
+    seq[aa_idx_to_mutate] = a
+    
+    return seq, aa_not_tried
+
 
   def _mutate(self, seq, plddt=None, logits=None, mutation_rate=1):
     '''mutate random position'''
@@ -562,7 +573,7 @@ class _af_design:
 
   
         aa_idx_to_mutate = plddt_idx_sorted[aa_try_idx]
-        mut_seq,aa_not_tried = self.my_mutate(seq=seq, plddt=plddt, logits=seq_logits + self._inputs["bias"], aa_not_tried=aa_not_tried,aa_idx_to_mutate=aa_idx_to_mutate)
+        mut_seq,aa_not_tried = self.my_redesign_mutate(seq=seq, plddt=plddt, logits=seq_logits + self._inputs["bias"], aa_not_tried=aa_not_tried,aa_idx_to_mutate=aa_idx_to_mutate)
         aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
         buff.append({"aux":aux, "seq":np.array(mut_seq)})
         current_loss = aux["loss"]
