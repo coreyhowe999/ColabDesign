@@ -489,7 +489,8 @@ class _af_design:
       self._k += 1
 
 ###########################################
-
+###########################################
+  ########################################
   
   def my_seq_redesign(self, iters=100, tries=10, dropout=False,fix_aa=None,omit_aa=None,seq=None,
                         save_best=True, seq_logits=None, e_tries=None, **kwargs):
@@ -536,8 +537,10 @@ class _af_design:
       buff = []
       model_nums = self._get_model_nums(**model_flags)
       num_tries = 0
+      #fix_aa here
       plddt_copy = plddt.copy()
-      np.delete(plddt_copy,np.array(fix_aa).astype(int))
+      fix = np.array([int(i) for i in fix_pos.split(',')])
+      np.delete(plddt_copy,fix)
       plddt_idx_sorted = np.argsort(plddt)
       print(np.array(fix_aa))
       print('plddt_idx_sorted BEFORE:',plddt_idx_sorted)
@@ -545,8 +548,7 @@ class _af_design:
       print('plddt_idx_sorted AFTER:',plddt_idx_sorted)
       aa_try_idx = 0
       
-      #fix_aa here
-      aa_idx_to_mutate = plddt_idx_sorted[aa_try_idx]
+      #omit aa here part1
       aa_not_tried.remove(seq[aa_idx_to_mutate])
       
       while current_loss > prev_loss and aa_try_idx< (len(seq[0])-1): # and aa_try_idx < 2
@@ -554,7 +556,7 @@ class _af_design:
         if len(aa_not_tried) <1:
           aa_try_idx+=1
           aa_not_tried = [i for i in range(0,20,1)]
-          #omit aa here
+          #omit aa here part2
           aa_not_tried.remove(seq[aa_idx_to_mutate])
           
 
