@@ -586,6 +586,10 @@ class _af_design:
       prev_loss = current_loss
       # accept best
       #print('loss:',losses)
+      print(mut_seq)
+      print(np.array(mut_seq))
+      print(buff)
+      print(losses)
       best = buff[np.argmin(losses)]
       self.aux, seq = best["aux"], jnp.array(best["seq"])
       self.set_seq(seq=seq, bias=self._inputs["bias"])
