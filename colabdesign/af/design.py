@@ -540,9 +540,10 @@ class _af_design:
       #fix_aa here
       plddt_copy = plddt.copy()
       fix = np.array([int(i) for i in fix_aa.split(',')])
-      np.delete(plddt_copy,fix)
+      plddt_copy = np.delete(plddt_copy,fix)
       plddt_idx_sorted = np.argsort(plddt)
-      print(np.array(fix_aa))
+      print('plddt:',plddt)
+      print('plddt_copy:',plddt_copy)
       print('plddt_idx_sorted BEFORE:',plddt_idx_sorted)
       plddt_idx_sorted = np.argsort(plddt_copy)
       print('plddt_idx_sorted AFTER:',plddt_idx_sorted)
