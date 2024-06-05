@@ -551,7 +551,7 @@ class _af_design:
       #omit aa here part1
       aa_not_tried.remove(seq[aa_idx_to_mutate])
       
-      while current_loss > prev_loss and aa_try_idx< (len(seq[0])-1): # and aa_try_idx < 2
+      while current_loss > prev_loss and aa_try_idx< (len(seq)-1): # and aa_try_idx < 2
         num_tries+=1
         if len(aa_not_tried) <1:
           aa_try_idx+=1
