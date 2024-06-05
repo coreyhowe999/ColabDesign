@@ -539,7 +539,7 @@ class _af_design:
       num_tries = 0
       #fix_aa here
       plddt_copy = plddt.copy()
-      fix = np.array([int(i) for i in fix_pos.split(',')])
+      fix = np.array([int(i) for i in fix_aa.split(',')])
       np.delete(plddt_copy,fix)
       plddt_idx_sorted = np.argsort(plddt)
       print(np.array(fix_aa))
