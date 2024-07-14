@@ -651,14 +651,14 @@ class _af_design:
       num_tries = 0
       plddt_idx_sorted = np.argsort(plddt)
       aa_try_idx = 0
-      while current_loss > prev_loss and aa_try_idx< (len(seq[0])-1): # and aa_try_idx < 2
+      while current_loss >= prev_loss and aa_try_idx< (len(seq[0])-1): # and aa_try_idx < 2
         num_tries+=1
         if len(aa_not_tried) <1:
           aa_try_idx+=1
           aa_not_tried = [i for i in range(0,20,1)]
         aa_idx_to_mutate = plddt_idx_sorted[aa_try_idx]
         mut_seq,aa_not_tried = self.my_mutate(seq=seq, plddt=plddt, logits=seq_logits + self._inputs["bias"], aa_not_tried=aa_not_tried,aa_idx_to_mutate=aa_idx_to_mutate)
-        aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
+        aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=True, **kwargs)
         buff.append({"aux":aux, "seq":np.array(mut_seq)})
         current_loss = aux["loss"]
         print('best loss:',prev_loss,'candidate:',current_loss)
