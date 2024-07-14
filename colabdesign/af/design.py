@@ -483,8 +483,9 @@ class _af_design:
       for t in range(int(num_tries)):
         mut_seq = self._mutate(seq=seq, plddt=plddt,
                                logits=seq_logits + self._inputs["bias"])
-        aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
+        aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=True, **kwargs)
         buff.append({"aux":aux, "seq":np.array(mut_seq)})
+        #print(
 
       # accept best
       losses = [x["aux"]["loss"] for x in buff]
