@@ -646,6 +646,7 @@ class _af_design:
     aa_not_tried.remove(4)
     
     for i in range(1,iters):
+      print('iter:',i)
       buff = []
       model_nums = self._get_model_nums(**model_flags)
       num_tries = 0
