@@ -675,7 +675,7 @@ class _af_design:
       self.aux, seq = best["aux"], jnp.array(best["seq"])
       self.set_seq(seq=seq, bias=self._inputs["bias"])
       self._save_results(save_best=save_best, verbose=verbose)
-      self.save_pdb(f'best.pdb')
+      self.save_pdb(f'iter{i}.pdb')
 
       scores.loc[i,'loss'] = prev_loss
       scores.loc[i,'num_tries'] = num_tries
