@@ -485,11 +485,12 @@ class _af_design:
                                logits=seq_logits + self._inputs["bias"])
         aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=False, **kwargs)
         buff.append({"aux":aux, "seq":np.array(mut_seq)})
-        #print(
+        print(aux["loss"])
 
       # accept best
       losses = [x["aux"]["loss"] for x in buff]
       best = buff[np.argmin(losses)]
+      print('best',best)
       self.aux, seq = best["aux"], jnp.array(best["seq"])
       self.set_seq(seq=seq, bias=self._inputs["bias"])
       #self._save_results(save_best=save_best, verbose=verbose)
