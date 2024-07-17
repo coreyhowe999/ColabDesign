@@ -644,7 +644,7 @@ class _af_design:
     prev_loss = 1000
     current_loss = 10000
     aa_not_tried = [i for i in range(0,20,1)]
-    aa_not_tried.remove(4)
+    #aa_not_tried.remove(4)
     
     for i in range(1,iters):
       print('iter:',i)
@@ -663,7 +663,7 @@ class _af_design:
         aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=True, **kwargs)
         buff.append({"aux":aux, "seq":np.array(mut_seq)})
         current_loss = aux["loss"]
-        print('best loss:',prev_loss,'candidate:',current_loss)
+        print('best loss:',prev_loss,'candidate:',current_loss, 'plddt',aux["loss"]["plddt"])
         
         
       print('num tries to improvement:',num_tries)
