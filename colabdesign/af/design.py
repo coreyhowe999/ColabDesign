@@ -674,8 +674,9 @@ class _af_design:
       #print('loss:',losses)
       best = buff[np.argmin(losses)]
       self.aux, seq = best["aux"], jnp.array(best["seq"])
+      print('best:',seq)
       self.set_seq(seq=seq, bias=self._inputs["bias"])
-      self._save_results(save_best=save_best, verbose=verbose)
+      #self._save_results(save_best=save_best, verbose=verbose)
       self.save_pdb(f'iter{i}.pdb')
 
       scores.loc[i,'loss'] = prev_loss
