@@ -629,6 +629,8 @@ class _af_design:
     aux = self.predict(seq, return_aux=True, verbose=True, **model_flags, **kwargs)
     plddt = self.aux["plddt"]
     plddt = plddt[self._target_len:] if self.protocol == "binder" else plddt[:self._len]
+
+    all_best = f'plddt: {round(aux["log"]["plddt"],3)}, i_pae: {round(aux["log"]["plddt"],3)}, i_con: {round(aux["log"]["i_con"],3)}'
     
     #get initial score
     scores = pd.DataFrame()
