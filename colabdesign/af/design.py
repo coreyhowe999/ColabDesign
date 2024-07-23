@@ -679,7 +679,7 @@ class _af_design:
       print('best:',seq)
       self.set_seq(seq=seq, bias=self._inputs["bias"])
       #self._save_results(save_best=save_best, verbose=verbose)
-      self.save_pdb(f'iter{i}.pdb')
+      self.save_pdb(f'pdbs/iter{i}.pdb')
 
       scores.loc[i,'loss'] = prev_loss
       scores.loc[i,'num_tries'] = num_tries
