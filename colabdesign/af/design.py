@@ -625,7 +625,8 @@ class _af_design:
 
                           
     # get current plddt
-    aux = self.predict(seq, return_aux=True, verbose=False, **model_flags, **kwargs)
+    print('initial score')
+    aux = self.predict(seq, return_aux=True, verbose=True, **model_flags, **kwargs)
     plddt = self.aux["plddt"]
     plddt = plddt[self._target_len:] if self.protocol == "binder" else plddt[:self._len]
     
