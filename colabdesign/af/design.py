@@ -663,7 +663,9 @@ class _af_design:
         aux = self.predict(seq=mut_seq, return_aux=True, model_nums=model_nums, verbose=True, **kwargs)
         buff.append({"aux":aux, "seq":np.array(mut_seq)})
         current_loss = aux["loss"]
-        print('best loss:',prev_loss,'candidate:',current_loss, 'plddt',aux["plddt"][self._target_len:].mean())
+        #print('best:',prev_loss,'candidate:',current_loss, 'plddt',round(aux["plddt"][self._target_len:].mean(),3)
+        cand_best = f'plddt: {round(aux["log"]["plddt"],3)}, i_pae: {round(aux["log"]["plddt"],3)}, i_con: {round(aux["log"]["i_con"],3)}'
+        print('best:',all_best,'candidate:',cand_best)
         
         
       print('num tries to improvement:',num_tries)
@@ -689,6 +691,7 @@ class _af_design:
       # update plddt
       plddt = best["aux"]["plddt"]
       plddt = plddt[self._target_len:] if self.protocol == "binder" else plddt[:self._len]
+      all_best = f'plddt: {round(aux["log"]["plddt"],3)}, i_pae: {round(aux["log"]["plddt"],3)}, i_con: {round(aux["log"]["i_con"],3)}'
       self._k += 1
 
   def my_binder_builder(self, save_best=True, **kwargs):
